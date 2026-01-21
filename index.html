@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="TaskPro">
     <meta name="description" content="Gestiona tareas, reuniones y recordatorios">
-    <title>TaskPro - Gestor de Tareas</title>
+    <title>TaskPro - Gestor Completo</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23667eea' width='100' height='100'/%3E%3Ctext y='75' font-size='70' fill='white' text-anchor='middle' x='50'%3E📋%3C/text%3E%3C/svg%3E">
     
@@ -26,6 +26,7 @@
             --warning: #f59e0b;
             --danger: #ef4444;
             --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
             --gray-200: #e5e7eb;
             --gray-300: #d1d5db;
             --gray-400: #9ca3af;
@@ -116,6 +117,19 @@
             border-radius: 20px;
         }
 
+        .sync-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
         .tabs {
             display: flex;
             background: var(--gray-50);
@@ -128,15 +142,15 @@
 
         .tab {
             flex: 1;
-            min-width: 120px;
-            padding: 16px 20px;
+            min-width: 100px;
+            padding: 16px 12px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: 600;
             border: none;
             background: transparent;
-            font-size: 0.95em;
+            font-size: 0.9em;
             color: var(--gray-600);
             border-bottom: 3px solid transparent;
         }
@@ -160,7 +174,7 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 16px;
             margin-bottom: 32px;
         }
@@ -168,7 +182,7 @@
         .stat-card {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
-            padding: 24px;
+            padding: 20px;
             border-radius: 16px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
@@ -181,7 +195,8 @@
 
         .stat-label {
             opacity: 0.95;
-            font-size: 0.95em;
+            font-size: 0.85em;
+            text-transform: uppercase;
         }
 
         .form-section {
@@ -220,9 +235,16 @@
             font-family: inherit;
         }
 
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
         textarea {
             min-height: 100px;
             width: 100%;
+            resize: vertical;
         }
 
         .btn {
@@ -239,6 +261,11 @@
         .btn-primary {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
         .btn-success {
@@ -262,6 +289,12 @@
             border-radius: 12px;
             border-left: 5px solid var(--primary);
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .task-card:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transform: translateX(4px);
         }
 
         .task-card.priority-alta {
@@ -308,6 +341,7 @@
             font-size: 0.75em;
             font-weight: 700;
             color: white;
+            white-space: nowrap;
         }
 
         .priority-alta-badge { background: var(--danger); }
@@ -355,12 +389,165 @@
             cursor: pointer;
             font-weight: 600;
             font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
         .filter-btn.active {
             background: var(--primary);
             color: white;
             border-color: var(--primary);
+        }
+
+        /* RECORDING SECTION */
+        .recording-section {
+            background: var(--gray-50);
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            border: 2px dashed var(--gray-300);
+        }
+
+        .recording-controls {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .record-button {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--danger);
+            border: none;
+            color: white;
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .record-button.recording {
+            animation: pulse-red 1.5s infinite;
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+            50% { box-shadow: 0 4px 24px rgba(239, 68, 68, 0.6); }
+        }
+
+        .recording-status {
+            flex: 1;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 2px solid var(--gray-200);
+            font-weight: 500;
+        }
+
+        .recording-status.active {
+            border-color: var(--danger);
+            background: #fef2f2;
+        }
+
+        .transcription-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            min-height: 180px;
+            border: 2px solid var(--gray-200);
+            white-space: pre-wrap;
+            line-height: 1.8;
+            color: var(--gray-700);
+            margin-bottom: 20px;
+            font-size: 1.05em;
+        }
+
+        .transcription-box:empty::before {
+            content: "La transcripción aparecerá aquí...";
+            color: var(--gray-400);
+            font-style: italic;
+        }
+
+        .key-points {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 16px;
+        }
+
+        .key-points h4 {
+            color: var(--gray-800);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .key-points ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .key-points li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+            color: var(--gray-700);
+        }
+
+        .key-points li::before {
+            content: "⭐";
+            position: absolute;
+            left: 0;
+        }
+
+        .meeting-details {
+            margin-top: 16px;
+        }
+
+        .meeting-details summary {
+            cursor: pointer;
+            font-weight: 600;
+            padding: 12px;
+            background: var(--gray-100);
+            border-radius: 8px;
+            user-select: none;
+        }
+
+        .meeting-content {
+            margin-top: 12px;
+            padding: 16px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 48px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2em;
+            color: var(--gray-400);
         }
 
         .empty-state {
@@ -406,10 +593,19 @@
         .notification.error { border-left: 4px solid var(--danger); }
 
         @media (max-width: 768px) {
-            .tab { font-size: 0.85em; padding: 12px; }
+            .header-content {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .tabs { top: 92px; }
+            .tab { font-size: 0.8em; padding: 12px 8px; min-width: 80px; }
             .tab-content { padding: 16px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
             .input-row { flex-direction: column; }
             input, select { width: 100%; min-width: unset; }
+            .recording-controls { flex-direction: column; }
+            .task-actions { flex-direction: column; }
+            .task-actions .btn { width: 100%; }
         }
     </style>
 </head>
@@ -418,7 +614,7 @@
         <div class="install-prompt" id="installPrompt">
             <div class="install-prompt-content">
                 <strong>📱 Instalar TaskPro</strong>
-                <p style="font-size: 0.9em; opacity: 0.9;">Instala la app para usarla como aplicación</p>
+                <p style="font-size: 0.9em;">Instala para mejor experiencia</p>
             </div>
             <button onclick="installApp()">Instalar</button>
             <button onclick="closePrompt()" style="background: transparent; color: white;">✕</button>
@@ -427,15 +623,21 @@
         <header class="header">
             <div class="header-content">
                 <div class="logo">📋 TaskPro</div>
-                <div class="sync-status">💾 Guardado</div>
+                <div class="sync-status">
+                    <span class="sync-indicator"></span>
+                    <span>Guardado</span>
+                </div>
             </div>
         </header>
 
         <div class="tabs">
             <button class="tab active" onclick="switchTab('tasks')">📝 Tareas</button>
+            <button class="tab" onclick="switchTab('meetings')">🎙️ Reuniones</button>
             <button class="tab" onclick="switchTab('reminders')">⏰ Recordatorios</button>
+            <button class="tab" onclick="switchTab('search')">🔍 Buscar</button>
         </div>
 
+        <!-- TAREAS -->
         <div id="tasks" class="tab-content active">
             <div class="stats-grid">
                 <div class="stat-card">
@@ -450,12 +652,16 @@
                     <div class="stat-number" id="completedTasks">0</div>
                     <div class="stat-label">Completadas</div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="highPriorityTasks">0</div>
+                    <div class="stat-label">Alta Prioridad</div>
+                </div>
             </div>
 
             <div class="form-section">
                 <h3 style="margin-bottom: 20px;">➕ Nueva Tarea</h3>
                 <div class="form-group">
-                    <label class="form-label">Título</label>
+                    <label class="form-label">Título *</label>
                     <input type="text" id="taskTitle" placeholder="Ej: Preparar presentación">
                 </div>
                 <div class="form-group">
@@ -464,37 +670,62 @@
                 </div>
                 <div class="input-row">
                     <select id="taskPriority" style="flex: 1;">
-                        <option value="alta">🔴 Alta</option>
-                        <option value="media" selected>🟡 Media</option>
-                        <option value="baja">🟢 Baja</option>
+                        <option value="alta">🔴 Alta Prioridad</option>
+                        <option value="media" selected>🟡 Media Prioridad</option>
+                        <option value="baja">🟢 Baja Prioridad</option>
                     </select>
                     <button class="btn btn-primary" onclick="addTask()">➕ Agregar</button>
                 </div>
             </div>
 
             <div class="filters">
-                <button class="filter-btn active" onclick="filterTasks('todas')">Todas</button>
-                <button class="filter-btn" onclick="filterTasks('pendientes')">Pendientes</button>
-                <button class="filter-btn" onclick="filterTasks('completadas')">Completadas</button>
+                <button class="filter-btn active" onclick="filterTasks('todas')">📋 Todas</button>
+                <button class="filter-btn" onclick="filterTasks('pendientes')">⏳ Pendientes</button>
+                <button class="filter-btn" onclick="filterTasks('completadas')">✅ Completadas</button>
                 <button class="filter-btn" onclick="filterTasks('alta')">🔴 Alta</button>
             </div>
 
             <div class="tasks-grid" id="taskList"></div>
         </div>
 
+        <!-- REUNIONES -->
+        <div id="meetings" class="tab-content">
+            <h2 style="margin-bottom: 24px;">🎙️ Grabar y Transcribir Reuniones</h2>
+
+            <div class="recording-section">
+                <div class="recording-controls">
+                    <button class="record-button" id="recordBtn" onclick="toggleRecording()">🎤</button>
+                    <div class="recording-status" id="recordingStatus">
+                        Presiona el micrófono para comenzar
+                    </div>
+                </div>
+
+                <div class="transcription-box" id="transcriptionBox"></div>
+
+                <div class="input-row">
+                    <input type="text" id="meetingTitle" placeholder="Título de la reunión" style="flex: 1;">
+                    <button class="btn btn-primary" onclick="saveMeeting()">💾 Guardar</button>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 16px;">📚 Reuniones Guardadas</h3>
+            <div class="tasks-grid" id="meetingList"></div>
+        </div>
+
+        <!-- RECORDATORIOS -->
         <div id="reminders" class="tab-content">
             <h2 style="margin-bottom: 24px;">⏰ Recordatorios</h2>
 
             <div class="alert-box">
                 <span style="font-size: 1.5em;">⚠️</span>
                 <div>
-                    <strong>Nota:</strong> Los recordatorios funcionan mejor cuando la app está abierta. Para alarmas confiables usa la app de Alarmas de tu teléfono.
+                    <strong>Nota:</strong> Los recordatorios solo funcionan cuando el navegador está abierto. Para alarmas confiables, usa la app de Alarmas nativa de tu teléfono.
                 </div>
             </div>
 
             <div class="form-section">
                 <div class="form-group">
-                    <label class="form-label">¿Qué recordar?</label>
+                    <label class="form-label">¿Qué recordar? *</label>
                     <input type="text" id="reminderText" placeholder="Ej: Llamar al cliente">
                 </div>
                 <div class="input-row">
@@ -505,15 +736,31 @@
 
             <div class="tasks-grid" id="reminderList"></div>
         </div>
+
+        <!-- BUSCAR -->
+        <div id="search" class="tab-content">
+            <h2 style="margin-bottom: 24px;">🔍 Buscar en Todo</h2>
+
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Buscar..." oninput="performSearch()">
+            </div>
+
+            <div id="searchResults"></div>
+        </div>
     </div>
 
     <script>
         let deferredPrompt;
-        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-        let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+        let tasks = JSON.parse(localStorage.getItem('taskpro_tasks')) || [];
+        let meetings = JSON.parse(localStorage.getItem('taskpro_meetings')) || [];
+        let reminders = JSON.parse(localStorage.getItem('taskpro_reminders')) || [];
         let currentFilter = 'todas';
+        let isRecording = false;
+        let recognition = null;
+        let transcriptionText = '';
 
-        // PWA Installation
+        // PWA
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -524,11 +771,11 @@
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((result) => {
-                    if (result.outcome === 'accepted') {
-                        showNotification('¡Instalado!', 'success');
-                    }
                     deferredPrompt = null;
                     document.getElementById('installPrompt').classList.remove('show');
+                    if (result.outcome === 'accepted') {
+                        showNotification('¡App instalada!', 'success');
+                    }
                 });
             }
         }
@@ -537,12 +784,62 @@
             document.getElementById('installPrompt').classList.remove('show');
         }
 
-        // Service Worker
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
+            navigator.serviceWorker.register('sw.js').catch(e => console.log(e));
         }
 
-        // Tabs
+        // SPEECH RECOGNITION
+        function initSpeech() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.lang = 'es-ES';
+                recognition.continuous = true;
+                recognition.interimResults = true;
+
+                recognition.onresult = (e) => {
+                    let interim = '', final = '';
+                    for (let i = e.resultIndex; i < e.results.length; i++) {
+                        const t = e.results[i][0].transcript;
+                        if (e.results[i].isFinal) final += t + ' ';
+                        else interim += t;
+                    }
+                    if (final) transcriptionText += final;
+                    document.getElementById('transcriptionBox').textContent = transcriptionText + interim;
+                };
+
+                recognition.onerror = (e) => showNotification('Error: ' + e.error, 'error');
+                recognition.onend = () => { if (isRecording) recognition.start(); };
+            }
+        }
+
+        function toggleRecording() {
+            if (!recognition) {
+                showNotification('Usa Chrome para grabar', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('recordBtn');
+            const status = document.getElementById('recordingStatus');
+
+            if (!isRecording) {
+                transcriptionText = '';
+                document.getElementById('transcriptionBox').textContent = '';
+                recognition.start();
+                isRecording = true;
+                btn.classList.add('recording');
+                status.textContent = '🔴 Grabando...';
+                status.classList.add('active');
+            } else {
+                recognition.stop();
+                isRecording = false;
+                btn.classList.remove('recording');
+                status.textContent = 'Detenido';
+                status.classList.remove('active');
+            }
+        }
+
+        // TABS
         function switchTab(tab) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -550,27 +847,22 @@
             document.getElementById(tab).classList.add('active');
         }
 
-        // Tasks
+        // TASKS
         function addTask() {
             const title = document.getElementById('taskTitle').value.trim();
-            if (!title) {
-                showNotification('Ingresa un título', 'error');
-                return;
-            }
+            if (!title) return showNotification('Ingresa un título', 'error');
 
-            const task = {
+            tasks.unshift({
                 id: Date.now(),
                 title,
                 description: document.getElementById('taskDescription').value.trim(),
                 priority: document.getElementById('taskPriority').value,
                 completed: false,
                 createdAt: new Date().toISOString()
-            };
+            });
 
-            tasks.unshift(task);
-            localStorage.setItem('tasks', JSON.stringify(tasks));
+            localStorage.setItem('taskpro_tasks', JSON.stringify(tasks));
             renderTasks();
-
             document.getElementById('taskTitle').value = '';
             document.getElementById('taskDescription').value = '';
             showNotification('✅ Tarea creada', 'success');
@@ -580,7 +872,7 @@
             const task = tasks.find(t => t.id === id);
             if (task) {
                 task.completed = !task.completed;
-                localStorage.setItem('tasks', JSON.stringify(tasks));
+                localStorage.setItem('taskpro_tasks', JSON.stringify(tasks));
                 renderTasks();
             }
         }
@@ -588,7 +880,7 @@
         function deleteTask(id) {
             if (confirm('¿Eliminar?')) {
                 tasks = tasks.filter(t => t.id !== id);
-                localStorage.setItem('tasks', JSON.stringify(tasks));
+                localStorage.setItem('taskpro_tasks', JSON.stringify(tasks));
                 renderTasks();
             }
         }
@@ -613,12 +905,13 @@
                 list.innerHTML = filtered.map(t => `
                     <div class="task-card priority-${t.priority} ${t.completed ? 'completed' : ''}">
                         <div class="task-header">
-                            <div class="task-title">${t.title}</div>
+                            <div class="task-title">${escapeHtml(t.title)}</div>
                             <span class="priority-badge priority-${t.priority}-badge">${t.priority.toUpperCase()}</span>
                         </div>
-                        ${t.description ? `<div class="task-description">${t.description}</div>` : ''}
+                        ${t.description ? `<div class="task-description">${escapeHtml(t.description)}</div>` : ''}
                         <div class="task-meta">
                             <span>📅 ${new Date(t.createdAt).toLocaleDateString('es')}</span>
+                            <span>⏰ ${new Date(t.createdAt).toLocaleTimeString('es', {hour: '2-digit', minute: '2-digit'})}</span>
                         </div>
                         <div class="task-actions">
                             <button class="btn btn-success" onclick="toggleTask(${t.id})">
@@ -633,43 +926,115 @@
             document.getElementById('totalTasks').textContent = tasks.length;
             document.getElementById('pendingTasks').textContent = tasks.filter(t => !t.completed).length;
             document.getElementById('completedTasks').textContent = tasks.filter(t => t.completed).length;
+            document.getElementById('highPriorityTasks').textContent = tasks.filter(t => t.priority === 'alta' && !t.completed).length;
         }
 
-        // Reminders
+        // MEETINGS
+        function saveMeeting() {
+            const title = document.getElementById('meetingTitle').value.trim();
+            const transcription = transcriptionText.trim();
+
+            if (!title) return showNotification('Ingresa título', 'error');
+            if (!transcription) return showNotification('No hay transcripción', 'error');
+
+            const keywords = ['importante', 'urgente', 'prioridad', 'crítico', 'deadline', 'acción', 'tarea', 'decisión', 'compromiso', 'objetivo'];
+            const sentences = transcription.split(/[.!?]+/).filter(s => s.trim().length > 20);
+            const keyPoints = sentences
+                .map(s => ({
+                    sentence: s.trim(),
+                    score: keywords.reduce((a, k) => a + (s.toLowerCase().includes(k) ? 1 : 0), 0)
+                }))
+                .filter(s => s.score > 0)
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 5)
+                .map(s => s.sentence);
+
+            meetings.unshift({
+                id: Date.now(),
+                title,
+                transcription,
+                keyPoints,
+                createdAt: new Date().toISOString()
+            });
+
+            localStorage.setItem('taskpro_meetings', JSON.stringify(meetings));
+            renderMeetings();
+
+            document.getElementById('meetingTitle').value = '';
+            transcriptionText = '';
+            document.getElementById('transcriptionBox').textContent = '';
+            showNotification('💾 Reunión guardada', 'success');
+        }
+
+        function deleteMeeting(id) {
+            if (confirm('¿Eliminar?')) {
+                meetings = meetings.filter(m => m.id !== id);
+                localStorage.setItem('taskpro_meetings', JSON.stringify(meetings));
+                renderMeetings();
+            }
+        }
+
+        function renderMeetings() {
+            const list = document.getElementById('meetingList');
+            if (meetings.length === 0) {
+                list.innerHTML = '<div class="empty-state"><div class="empty-icon">🎙️</div><h3>No hay reuniones</h3></div>';
+                return;
+            }
+
+            list.innerHTML = meetings.map(m => `
+                <div class="task-card">
+                    <div class="task-header">
+                        <div class="task-title">🎙️ ${escapeHtml(m.title)}</div>
+                    </div>
+                    <div class="task-meta">
+                        <span>📅 ${new Date(m.createdAt).toLocaleDateString('es')}</span>
+                        <span>📝 ${m.transcription.split(' ').length} palabras</span>
+                    </div>
+                    ${m.keyPoints.length > 0 ? `
+                        <div class="key-points">
+                            <h4>⭐ Puntos Estratégicos</h4>
+                            <ul>${m.keyPoints.map(p => `<li>${escapeHtml(p)}</li>`).join('')}</ul>
+                        </div>
+                    ` : ''}
+                    <details class="meeting-details">
+                        <summary>📄 Ver transcripción</summary>
+                        <div class="meeting-content">${escapeHtml(m.transcription)}</div>
+                    </details>
+                    <div class="task-actions" style="margin-top: 16px;">
+                        <button class="btn btn-danger" onclick="deleteMeeting(${m.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // REMINDERS
         function addReminder() {
             const text = document.getElementById('reminderText').value.trim();
             const time = document.getElementById('reminderTime').value;
 
-            if (!text || !time) {
-                showNotification('Completa los campos', 'error');
-                return;
-            }
+            if (!text || !time) return showNotification('Completa los campos', 'error');
 
-            const reminder = {
+            reminders.unshift({
                 id: Date.now(),
                 text,
                 time: new Date(time).toISOString(),
                 createdAt: new Date().toISOString()
-            };
+            });
 
-            reminders.unshift(reminder);
-            localStorage.setItem('reminders', JSON.stringify(reminders));
+            localStorage.setItem('taskpro_reminders', JSON.stringify(reminders));
             renderReminders();
 
             document.getElementById('reminderText').value = '';
             document.getElementById('reminderTime').value = '';
 
-            if ('Notification' in window) {
-                Notification.requestPermission();
-            }
-
+            if ('Notification' in window) Notification.requestPermission();
             showNotification('⏰ Recordatorio creado', 'success');
         }
 
         function deleteReminder(id) {
             if (confirm('¿Eliminar?')) {
                 reminders = reminders.filter(r => r.id !== id);
-                localStorage.setItem('reminders', JSON.stringify(reminders));
+                localStorage.setItem('taskpro_reminders', JSON.stringify(reminders));
                 renderReminders();
             }
         }
@@ -690,7 +1055,7 @@
                 return `
                     <div class="task-card ${isPast ? 'completed' : ''}">
                         <div class="task-header">
-                            <div class="task-title">${r.text}</div>
+                            <div class="task-title">${escapeHtml(r.text)}</div>
                             ${isToday && !isPast ? '<span class="priority-badge priority-alta-badge">HOY</span>' : ''}
                         </div>
                         <div class="task-meta">
@@ -706,6 +1071,72 @@
             }).join('');
         }
 
+        // SEARCH
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            const results = document.getElementById('searchResults');
+
+            if (!query) {
+                results.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><h3>Busca en todo</h3></div>';
+                return;
+            }
+
+            const found = [];
+
+            tasks.forEach(t => {
+                if (t.title.toLowerCase().includes(query) || (t.description && t.description.toLowerCase().includes(query))) {
+                    found.push({...t, type: 'Tarea'});
+                }
+            });
+
+            meetings.forEach(m => {
+                if (m.title.toLowerCase().includes(query) || m.transcription.toLowerCase().includes(query)) {
+                    found.push({...m, type: 'Reunión'});
+                }
+            });
+
+            reminders.forEach(r => {
+                if (r.text.toLowerCase().includes(query)) {
+                    found.push({...r, type: 'Recordatorio'});
+                }
+            });
+
+            if (found.length === 0) {
+                results.innerHTML = '<div class="empty-state"><div class="empty-icon">😔</div><h3>Sin resultados</h3></div>';
+                return;
+            }
+
+            results.innerHTML = `
+                <h3 style="margin-bottom: 16px;">${found.length} resultado(s)</h3>
+                <div class="tasks-grid">
+                    ${found.map(item => {
+                        const icon = item.type === 'Tarea' ? '📝' : item.type === 'Reunión' ? '🎙️' : '⏰';
+                        const title = item.title || item.text;
+                        return `
+                            <div class="task-card">
+                                <div style="margin-bottom: 8px;">
+                                    <span style="background: var(--gray-200); padding: 4px 12px; border-radius: 12px; font-size: 0.85em; font-weight: 600;">
+                                        ${icon} ${item.type}
+                                    </span>
+                                </div>
+                                <div class="task-title">${escapeHtml(title)}</div>
+                                <div class="task-meta">
+                                    <span>📅 ${new Date(item.createdAt || item.time).toLocaleDateString('es')}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        // UTILS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         function showNotification(msg, type) {
             const n = document.createElement('div');
             n.className = `notification ${type}`;
@@ -714,8 +1145,10 @@
             setTimeout(() => n.remove(), 3000);
         }
 
-        // Init
+        // INIT
+        initSpeech();
         renderTasks();
+        renderMeetings();
         renderReminders();
     </script>
 </body>
